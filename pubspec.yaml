@@ -1,18 +1,38 @@
-name: geo_alert_app
-description: A geographic alert mobile client.
-publish_to: 'none'
-version: 1.0.0+1
+name: Build Flutter APK
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+on:
+  push:
+    branches: [ main, master ]
 
-dependencies:
-  flutter:
-    sdk: flutter
-  http: ^1.2.0
-  firebase_core: ^3.0.0
-  firebase_messaging: ^15.0.0
-  geolocator: ^11.0.0
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-flutter:
-  uses-material-design: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
