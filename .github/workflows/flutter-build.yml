@@ -25,6 +25,12 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create Flutter Project Structure if missing
+        run: |
+          if [ ! -f "pubspec.yaml" ]; then
+            flutter create . --org com.example --project-name geo_alert_app --platforms=android
+          fi
+
       - name: Install dependencies
         run: flutter pub get
 
